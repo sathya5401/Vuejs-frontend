@@ -1,15 +1,39 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <!-- Conditionally render the navbar based on the current route -->
+    <NavBar v-if="showNavBar" />
+    <div id="app">
+      <!-- Insertion point for views based on the current route -->
+      <router-view/>
+    </div>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import NavBar from './components/NavBar.vue';
 
 export default {
-  name: 'App',
+  // Registering Navbar component
   components: {
-    HelloWorld
+    NavBar,
+  },
+  // Name of the root component
+  name: 'App',
+  data() {
+    return {
+      showNavBar: true, // Initial value to show navbar
+    };
+  },
+  created() {
+    // Listen to route changes and update showNavBar accordingly
+    this.$router.beforeEach((to, from, next) => {
+      // Define an array of routes where the navbar should be hidden
+      const routesWithoutNavBar = ['/login', '/register']; // routes that dont need navbar with logout
+
+      // Check if the current route is in the array of routes without navbar
+      this.showNavBar = !routesWithoutNavBar.includes(to.path);
+      next();
+    });
   }
 }
 </script>
